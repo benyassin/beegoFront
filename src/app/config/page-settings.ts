@@ -1,4 +1,4 @@
-var pageSettings = {
+const pageSettings = {
   pageSidebarMinified: false,
   pageContentFullHeight: false,
   pageContentFullWidth: false,

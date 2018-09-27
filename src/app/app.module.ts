@@ -28,16 +28,37 @@ import { SlimLoadingBarModule } from 'ng2-slim-loading-bar';
 import { NgxChartsModule }      from '@swimlane/ngx-charts';
 import { NgxDatatableModule }   from '@swimlane/ngx-datatable';
 import { TrendModule }          from 'ngx-trend';
-import { HighlightJsModule }    from 'ngx-highlight-js'
+import { HighlightJsModule }    from 'ngx-highlight-js';
 import { CountdownModule }      from 'ngx-countdown';
 import { ChartsModule }         from 'ng4-charts/ng4-charts';
 import { TagsInputModule }      from 'ngx-tags-input/dist';
 import { Ng2TableModule }       from 'ngx-datatable/ng2-table';
+import { FormioModule } from 'angular-formio';
 
 // Pages
 import { HomePage }          from './pages/home/home';
-import { FormioModule } from 'angular-formio';
+import { LoginPage } from './pages/login/login';
+import { SignUpComponent } from './pages/signup/signup';
+import { WizardComponent } from './pages/signup/wizard';
 
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { JWT_OPTIONS, JwtInterceptor, JwtModule } from '@auth0/angular-jwt';
+import { RefreshTokenInterceptor } from './interceptors/refresh-token-interceptor';
+import { AuthorizationService } from './services/authorization.service';
+import { UserService } from './services/user.service';
+
+function jwtOptionsFactory (authorizationService: AuthorizationService) {
+  return {
+    tokenGetter: () => {
+      return authorizationService.getAccessToken();
+    },
+    blacklistedRoutes: [`http://localhost:8000/login-check`]
+  };
+}
+
+export function tokenGetter() {
+  return localStorage.getItem('access_token');
+}
 
 @NgModule({
   declarations: [
@@ -48,7 +69,10 @@ import { FormioModule } from 'angular-formio';
     TopMenuComponent,
     FooterComponent,
     PanelComponent,
-    HomePage
+    LoginPage,
+    HomePage,
+    SignUpComponent,
+    WizardComponent
   ],
   imports: [
     AppRoutingModule,
@@ -72,9 +96,32 @@ import { FormioModule } from 'angular-formio';
     MatSortModule,
     MatTableModule,
     FormioModule,
-    Ng2TableModule
+    Ng2TableModule,
+    HttpClientModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        whitelistedDomains: ['localhost:8000'],
+        blacklistedRoutes: ['localhost:3001/auth/']
+      }
+    })
   ],
-  providers: [ Title ],
+  providers: [
+    Title,
+    AuthorizationService,
+    UserService,
+    JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor
+    {
+      provide: HTTP_INTERCEPTORS,
+      useExisting: JwtInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: RefreshTokenInterceptor,
+      multi: true
+    }
+   ],
   bootstrap: [ AppComponent ]
 })
 
@@ -82,7 +129,7 @@ export class AppModule {
   constructor(private router: Router, private titleService: Title, private route: ActivatedRoute) {
     router.events.subscribe((e) => {
       if (e instanceof NavigationEnd) {
-        var title = 'Color Admin | ' + this.route.snapshot.firstChild.data['title'];
+        const title = 'Color Admin | ' + this.route.snapshot.firstChild.data['title'];
         this.titleService.setTitle(title);
       }
     });
