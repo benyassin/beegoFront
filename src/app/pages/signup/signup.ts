@@ -4,6 +4,8 @@ import { NgForm } from '@angular/forms';
 import pageSettings from '../../config/page-settings';
 import { UserService } from '../../services/user.service';
 import { HttpClient } from '@angular/common/http';
+import { AuthorizationService } from '../../services/authorization.service';
+
 @Component({
     // tslint:disable-next-line:component-selector
     selector: 'signup',
@@ -25,6 +27,7 @@ export class SignUpComponent implements OnDestroy {
 
   constructor(private router: Router,
     private renderer: Renderer2,
+    private authorization: AuthorizationService,
     private Userserice: UserService, private httpClient: HttpClient) {
     this.pageSettings.pageEmpty = true;
     this.renderer.addClass(document.body, 'bg-white');
@@ -45,7 +48,8 @@ export class SignUpComponent implements OnDestroy {
         .subscribe(
             (data) => {
                 console.log(data);
-                // this.router.navigate(['home']);
+                this.authorization.setRefreshToken(data.refresh_token);
+                this.authorization.setUserDetails(data);
             },
             err => {
                 this.error = err.error.error;

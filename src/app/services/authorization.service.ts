@@ -84,12 +84,22 @@ export class AuthorizationService {
     }
   }
 
-  private setRefreshToken (refreshToken: string) {
+  setRefreshToken (refreshToken: string) {
     if (!refreshToken) {
       localStorage.removeItem('refresh_token');
     } else {
       localStorage.setItem('refresh_token', refreshToken);
     }
+  }
+  setUserDetails(user) {
+    if (!user) {
+      localStorage.removeItem('user');
+    } else {
+      localStorage.setItem('user', JSON.stringify(user));
+    }
+  }
+  getUserDetails() {
+    return JSON.parse(localStorage.getItem('user'));
   }
 
   getAccessToken () {

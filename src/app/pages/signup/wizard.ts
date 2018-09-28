@@ -14,13 +14,19 @@ import { HttpClient } from '@angular/common/http';
 
 
 export class WizardComponent implements OnDestroy {
-  pageSettings = pageSettings;
+    pageSettings = pageSettings;
     signup: any = {
         firstname: null,
         lastname: null,
         accepted: false,
     };
     error: any;
+    step = 1;
+    wizard: any = [
+    {title: 'Information Personnel', description: 'Lorem ipsum dolor sit amet', number: 1},
+    {title: 'Organization', description: 'Lorem ipsum dolor sit amet', number: 2},
+    {title: 'Step 3', description: 'Lorem ipsum dolor sit amet', number: 3},
+    {title: 'Step 4', description: 'Lorem ipsum dolor sit amet', number: 4}];
 
   constructor(private router: Router,
     private renderer: Renderer2,
@@ -37,18 +43,31 @@ export class WizardComponent implements OnDestroy {
     return password === _password;
 
   }
+  next() {
+    if (this.step < 4) {
+
+    this.step = this.step + 1 ;
+    }
+
+  }
+  previous() {
+    if (this.step > 1) {
+
+        this.step = this.step - 1 ;
+      }
+    }
   formSubmit(f: NgForm) {
       console.log(f.value);
       if (f.valid) {
-        // this.Userserice.createUser(f.value)
-        // .subscribe(
-        //     (data) => {
-        //         console.log(data);
-        //         // this.router.navigate(['home']);
-        //     },
-        //     err => {
-        //         this.error = err.error.error;
-        //     });
+        this.Userserice.updateUser(f.value)
+        .subscribe(
+            (data) => {
+                console.log(data);
+                // this.router.navigate(['home']);
+            },
+            err => {
+                this.error = err.error.error;
+            });
       }
-  }
+    }
 }
