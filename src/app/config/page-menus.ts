@@ -5,7 +5,7 @@ const pageMenus = [{
 }, {
   'icon': 'fa fa-align-left',
   'title': 'Campaigns',
-  'url': '',
+  'url': '/campaigns',
   'caret': 'false',
   'submenu': [{
     'url': '',

@@ -40,12 +40,16 @@ import { HomePage }          from './pages/home/home';
 import { LoginPage } from './pages/login/login';
 import { SignUpComponent } from './pages/signup/signup';
 import { WizardComponent } from './pages/signup/wizard';
+import { CampaignPage } from './pages/campaign/campaign';
 
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { JWT_OPTIONS, JwtInterceptor, JwtModule } from '@auth0/angular-jwt';
 import { RefreshTokenInterceptor } from './interceptors/refresh-token-interceptor';
 import { AuthorizationService } from './services/authorization.service';
 import { UserService } from './services/user.service';
+import { CampaignService } from './services/campaign.service';
+import { FormService } from './services/form.service';
+import { CampaignsPage } from './pages/campaigns/campaigns';
 
 function jwtOptionsFactory (authorizationService: AuthorizationService) {
   return {
@@ -72,7 +76,9 @@ export function tokenGetter() {
     LoginPage,
     HomePage,
     SignUpComponent,
-    WizardComponent
+    WizardComponent,
+    CampaignPage,
+    CampaignsPage
   ],
   imports: [
     AppRoutingModule,
@@ -110,6 +116,8 @@ export function tokenGetter() {
     Title,
     AuthorizationService,
     UserService,
+    CampaignService,
+    FormService,
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor
     {
       provide: HTTP_INTERCEPTORS,

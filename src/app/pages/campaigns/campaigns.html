@@ -1,0 +1,39 @@
+<!-- begin breadcrumb -->
+<ol class="breadcrumb pull-right">
+    <li class="breadcrumb-item"><a href="javascript:;">Home</a></li>
+    <li class="breadcrumb-item"><a href="javascript:;">Library</a></li>
+    <li class="breadcrumb-item active"><a href="javascript:;">Data</a></li>
+  </ol>
+  <!-- end breadcrumb -->
+  <!-- begin page-header -->
+  <h1 class="page-header">Campaigns <small>header small text goes here...</small></h1>
+  <!-- end page-header -->
+  
+  <!-- begin panel -->
+  <panel title="Campaigns List">
+    
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <td>Name</td>
+                <td>from</td>
+                <td>to</td>
+                <td>activate</td>
+                <td>action</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let campaign of campaigns">
+                <td>{{campaign.name}}</td>
+                <td>{{campaign.from}}</td>
+                <td>{{campaign.to}}</td>
+                <td>{{campaign.is_active || false}}</td>
+                <td class="with-btn" nowrap>
+                    <a (click)="edit(campaign.id)" class="btn btn-sm btn-primary width-60 m-r-2">Edit</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+  </panel>
+  <!-- end panel -->
+  
