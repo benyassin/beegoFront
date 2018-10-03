@@ -9,7 +9,6 @@ export class NgbDateNativeAdapter extends NgbDateAdapter<Date> {
     fromModel(date: Date): NgbDateStruct {
       return (date && date.getFullYear) ? {year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate()} : null;
     }
-  
     toModel(date: NgbDateStruct): Date {
       return date ? new Date(date.year, date.month - 1, date.day) : null;
     }
@@ -44,10 +43,14 @@ export class CampaignPage implements OnInit {
         schema: null
     };
     step = 1;
+    editing = false;
+    creating = false;
     geometries = [
-      {title: 'Polygone', value: 'polygone'},
-      {title: 'Polyline', value: 'polyline'},
-      {title: 'Point', value: 'point'}
+      {title: 'Point', value: '1'},
+      {title: 'Polyline', value: '2'},
+      {title: 'Polygon', value: '3'},
+      {title: 'Sans Géometrie', value: '4'},
+      {title: 'Identification', value: '5'}
     ];
     wizard: any = [
         {title: 'Campaign', description: 'Lorem ipsum dolor sit amet', number: 1},
@@ -68,40 +71,74 @@ export class CampaignPage implements OnInit {
     console.log(f.value);
     switch (this.step) {
         case 1 :
-        this.campaignservice.createCampaign(this.campaign)
-        .subscribe(
-            data => {
-                // this.router.navigate(['home']);
-                this.campaignId = data.id;
-                console.log(data);
-            },
-            err => {
-                console.log(err);
-            });
+        this.createCampaign(this.campaign);
         break;
         case 2 :
-        console.log(this.formulaire);
-        console.log(this.form);
         const payload = {...this.formulaire, schema: this.form, campaignId: this.campaignId };
-        console.log(payload);
-        this.formservice.createForm(payload)
-            .subscribe(
-              data => {
-                console.log(data);
-              },
-              err => {
-                console.log(err);
-              });
+
+          if (this.editing) {
+              this.editForm({...payload, id: this.formulaire.id});
+          } else {
+              this.createForm(payload);
+          }
+
         break;
         default:
         console.log('switch case exception');
     }
 
   }
+  createCampaign(campaign) {
+    this.campaignservice.createCampaign(campaign)
+    .subscribe(
+        data => {
+            // this.router.navigate(['home']);
+            this.campaignId = data.id;
+            console.log(data);
+        },
+        err => {
+            console.log(err);
+        });
+  }
+  createForm(payload) {
+    this.formservice.createForm(payload)
+        .subscribe(
+          data => {
+            console.log(data);
+            this.creating = false;
+          },
+          err => {
+            console.log(err);
+      });
+  }
+  editForm(payload) {
+    console.log(payload);
+    this.formservice.updateForm(payload)
+      .subscribe(
+        data => {
+          console.log(data);
+          this.editing = false;
+        },
+        err => {
+          console.log(err);
+        }
+      );
+  }
+  deleteForm(id) {
+    this.formservice.deleteForm(id)
+      .subscribe(
+        data => {
+          console.log(data);
+        },
+        err => {
+          console.log(err);
+        }
+      );
+  }
   onGeometryChange(value) {
-    console.log(value)
+    console.log(value);
     this.formulaire.geometry = value;
-}
+  }
   onChange(event) {
       console.log(event);
       this.refreshForm.emit({
@@ -122,6 +159,31 @@ export class CampaignPage implements OnInit {
       }
     );
   }
+  edit(form) {
+    this.formulaire = {...form};
+    this.editing = true;
+  }
+
+  toggleForm(id, state) {
+    this.formservice.toggleForm(id, state)
+      .subscribe(
+        data => {
+          console.log(data);
+        },
+        err => {
+          console.log(err);
+        }
+      );
+  }
+  newForm() {
+    console.log('[newForm] clicked');
+    this.formulaire = {
+      name: null,
+      geometry: null,
+      schema: null
+    };
+    this.creating = true;
+  }
   ngOnInit() {
     if (this.campaignservice.currentCampaign !== null ) {
       this.campaignservice.getCampaign(this.campaignservice.currentCampaign)
@@ -131,6 +193,7 @@ export class CampaignPage implements OnInit {
           data.from = new Date(data.from);
           data.to = new Date(data.to);
           this.campaign = data;
+          this.campaignId = data.id;
           this.fetchforms(data.id);
         },
         err => {

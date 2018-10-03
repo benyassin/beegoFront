@@ -109,6 +109,12 @@
             <!-- begin step-2 -->
             <div *ngIf="step == 2" id="step-2" class="tab-pane step-content" style="display: block;">
                 <!-- begin fieldset -->
+            <div class="row">
+                <div class="col-md-12 text-right">
+                <button (click)=newForm() class="btn btn-green" type="button">Nouveau formulaire</button>
+                </div>
+            </div>
+            <div class="row m-t-5">
                 <table *ngIf="forms.length !== 0" class="table table-bordered">
                         <thead>
                             <tr>
@@ -121,43 +127,29 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                            <td>1</td>
-                            <td>Test Form</td>
+                            <tr *ngFor="let form of forms">
+                            <td>{{ form.id }}</td>
+                            <td>{{form.name}}</td>
                             <td style="background:green"></td>
-                            <td>Polygone</td>
+                            <td>{{ form.geometry }}</td>
                             <td class="with-checkbox">
                                     <div class="checkbox checkbox-css">
-                                      <input type="checkbox" value="" id="table_checkbox_2" checked />
-                                      <label for="table_checkbox_2">&nbsp;</label>
+                                      <input (change)="toggleForm(form.id,form.isActive)" [(ngModel)]="form.isActive" type="checkbox" name="checkbox-{{form.id}}" id="checkbox-{{form.id}}" />
+                                      <label for="checkbox-{{form.id}}">&nbsp;</label>
+
                                     </div>
                             </td>
                             <td class="with-btn" nowrap>
-                                <a href="#" class="btn btn-sm btn-primary width-60 m-r-2">Edit</a>
-                                <a href="#" class="btn btn-sm btn-white width-60">Delete</a>
-                            </td>
-                            </tr>
-                            <tr>
-                            <td>1</td>
-                            <td>Test Form</td>
-                            <td style="background:red"></td>
-                            <td>Polygone</td>
-                            <td class="with-checkbox">
-                                    <div class="checkbox checkbox-css">
-                                      <input type="checkbox" value="" id="table_checkbox_2" checked />
-                                      <label for="table_checkbox_2">&nbsp;</label>
-                                    </div>
-                            </td>
-                            <td class="with-btn" nowrap>
-                                <a href="#" class="btn btn-sm btn-primary width-60 m-r-2">Edit</a>
-                                <a href="#" class="btn btn-sm btn-white width-60">Delete</a>
+                                <a (click)="edit(form)" class="btn btn-sm btn-primary width-60 m-r-2">Edit</a>
+                                <a (click)="deleteForm(form.id)" class="btn btn-sm btn-white width-60">Delete</a>
                             </td>
                             </tr>
                         </tbody>
                 </table>
+            </div>
                 
 
-
+                <div *ngIf="editing == true || creating == true">
                 <div class="form-group row m-b-10">
                     <label class="col-md-3 text-md-right col-form-label">Name</label>
                     <div class="col-md-6">
@@ -187,6 +179,7 @@
 
 
                 </fieldset>
+            </div>
                 <!-- end fieldset -->
             </div>
             <!-- end step-2 -->
