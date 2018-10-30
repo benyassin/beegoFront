@@ -11,8 +11,12 @@
   
   <!-- begin panel -->
   <panel title="Campaigns List">
-    
-    <table class="table table-bordered">
+        <div class="row">
+                <div class="col-md-12 text-right">
+                <button class="btn btn-green" type="button">Nouvelle Campagne</button>
+                </div>
+            </div>
+    <table class="table table-bordered m-t-5">
         <thead>
             <tr>
                 <td>Name</td>
@@ -29,7 +33,8 @@
                 <td>{{campaign.to}}</td>
                 <td>{{campaign.is_active || false}}</td>
                 <td class="with-btn" nowrap>
-                    <a (click)="edit(campaign.id)" class="btn btn-sm btn-primary width-60 m-r-2">Edit</a>
+                    <button type="button" (click)="edit(campaign.id)" class="btn btn-sm btn-primary width-60 m-r-2">Edit</button>
+                    <button type="button" class="btn btn-sm btn-primary width-60 m-r-2">Delete</button>
                 </td>
             </tr>
         </tbody>

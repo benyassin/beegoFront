@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, ReplaySubject } from 'rxjs';
 import { BASE_URL } from '../config/globals';
 import { AuthorizationService } from './authorization.service';
+import { User } from './user.interface';
 @Injectable()
 
 export class UserService {
@@ -13,14 +14,9 @@ export class UserService {
     }
 
 
-    createUser(payload): Observable<any> {
-        const headers = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
-        const body = new HttpParams()
-        .set('username', payload.username)
-        .set('email', payload.email)
-        .set('password', payload.password);
-
-        const postObservable = this.httpClient.post(BASE_URL + '/users', body.toString(), { headers });
+    createUser(user: User): Observable<any> {
+        // const headers = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
+        const postObservable = this.httpClient.post(BASE_URL + '/users', user);
 
         return postObservable;
     }
@@ -35,6 +31,10 @@ export class UserService {
         const updateObservable = this.httpClient.put(BASE_URL + '/users/' + user.id, body.toString(), {headers} );
 
         return updateObservable;
+    }
+
+    listUsers(): Observable<any> {
+        return this.httpClient.get(BASE_URL + '/users/list');
     }
 }
 

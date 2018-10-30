@@ -1,8 +1,9 @@
-import { Component, OnInit, Injectable, EventEmitter  } from '@angular/core';
-import { NgbDateAdapter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnInit, Injectable, EventEmitter, AfterViewInit, ViewChild  } from '@angular/core';
+import { NgbModal,NgbDateAdapter, NgbDateStruct, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { NgForm } from '@angular/forms';
 import { CampaignService } from '../../services/campaign.service';
 import { FormService } from '../../services/form.service';
+import * as L from 'leaflet';
 @Injectable()
 export class NgbDateNativeAdapter extends NgbDateAdapter<Date> {
 
@@ -18,14 +19,17 @@ export class NgbDateNativeAdapter extends NgbDateAdapter<Date> {
 @Component({
   selector: 'campaign',
   templateUrl: './campaign.html',
-  providers: [{provide: NgbDateAdapter, useClass: NgbDateNativeAdapter}]
+  providers: [{provide: NgbDateAdapter, useClass: NgbDateNativeAdapter}],
+  styleUrls: ['./campaign.css'],
+
 })
 
 
-export class CampaignPage implements OnInit {
+export class CampaignPage implements OnInit, AfterViewInit {
     constructor(
       private campaignservice: CampaignService,
-      private formservice: FormService
+      private formservice: FormService,
+      private modalService: NgbModal
     ) {}
     campaignId = null;
     campaign: any = {
@@ -45,6 +49,10 @@ export class CampaignPage implements OnInit {
     step = 1;
     editing = false;
     creating = false;
+    options: NgbModalOptions = {
+      size: 'lg'
+    };
+    
     geometries = [
       {title: 'Point', value: '1'},
       {title: 'Polyline', value: '2'},
@@ -61,11 +69,23 @@ export class CampaignPage implements OnInit {
   public form: any = {
     components: []
   };
+
+ 
   refreshForm;
   render: any = {title: 'test', components: []};
   forms = [];
   get today() {
     return new Date();
+  }
+  open(content) {
+    console.log(content);
+    this.modalService.open(content, this.options).result.then((result) => {
+     const map = L.map('mapid').setView([51.505, -0.09], 13);
+      map.invalidateSize();
+      // this.closeResult = `Closed with: ${result}`;
+    }, (reason) => {
+      // this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
   }
   formSubmit(f: NgForm) {
     console.log(f.value);
@@ -106,6 +126,7 @@ export class CampaignPage implements OnInit {
           data => {
             console.log(data);
             this.creating = false;
+            this.fetchforms(this.campaignId);
           },
           err => {
             console.log(err);
@@ -118,6 +139,7 @@ export class CampaignPage implements OnInit {
         data => {
           console.log(data);
           this.editing = false;
+          this.fetchforms(this.campaignId);
         },
         err => {
           console.log(err);
@@ -129,6 +151,7 @@ export class CampaignPage implements OnInit {
       .subscribe(
         data => {
           console.log(data);
+          this.fetchforms(this.campaignId);
         },
         err => {
           console.log(err);
@@ -169,6 +192,7 @@ export class CampaignPage implements OnInit {
       .subscribe(
         data => {
           console.log(data);
+          this.fetchforms(this.campaignId);
         },
         err => {
           console.log(err);
@@ -184,6 +208,7 @@ export class CampaignPage implements OnInit {
     };
     this.creating = true;
   }
+
   ngOnInit() {
     if (this.campaignservice.currentCampaign !== null ) {
       this.campaignservice.getCampaign(this.campaignservice.currentCampaign)
@@ -201,7 +226,9 @@ export class CampaignPage implements OnInit {
         }
       );
     }
-    this.refreshForm = new EventEmitter();
 
+    this.refreshForm = new EventEmitter();
+  }
+  ngAfterViewInit() {
   }
 }

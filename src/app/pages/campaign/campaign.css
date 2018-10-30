@@ -44,3 +44,6 @@
     border-left: 1px solid #e2e7eb;
   }
   
+  .modal-content {
+    width: 700px !important;
+  }

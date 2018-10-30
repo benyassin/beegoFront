@@ -9,6 +9,7 @@ import { SignUpComponent } from './pages/signup/signup';
 import { WizardComponent } from './pages/signup/wizard';
 import { CampaignPage } from './pages/campaign/campaign';
 import { CampaignsPage } from './pages/campaigns/campaigns';
+import { UsersPage } from './pages/users/users';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -17,7 +18,8 @@ const routes: Routes = [
   { path: 'signup', component: SignUpComponent, data: { title: 'SignUp'} },
   { path: 'wizard', component: WizardComponent, data: { title: 'Wizard'} },
   { path: 'campaign', component: CampaignPage, data: {title: 'Campaign'}},
-  { path: 'campaigns', component: CampaignsPage, data: {title: 'Campaigns'}}
+  { path: 'campaigns', component: CampaignsPage, data: {title: 'Campaigns'}},
+  { path: 'users', component: UsersPage, data: {title: 'Users'}}
 ];
 
 @NgModule({

@@ -50,6 +50,7 @@ import { UserService } from './services/user.service';
 import { CampaignService } from './services/campaign.service';
 import { FormService } from './services/form.service';
 import { CampaignsPage } from './pages/campaigns/campaigns';
+import { UsersPage } from './pages/users/users';
 
 function jwtOptionsFactory (authorizationService: AuthorizationService) {
   return {
@@ -78,7 +79,8 @@ export function tokenGetter() {
     SignUpComponent,
     WizardComponent,
     CampaignPage,
-    CampaignsPage
+    CampaignsPage,
+    UsersPage,
   ],
   imports: [
     AppRoutingModule,
